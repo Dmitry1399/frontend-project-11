@@ -24,7 +24,7 @@ const watchedState = onChange(initialState, render(elements, initialState));
 const schema = yup.string()
   .trim()
   .url()
-  .test('already added feed', 'this feed has already been added', function (value) {
+  .test('already added feed', 'this feed has already been added', function isAlreadyAddFeed(value) {
     const addedUrls = this.options.context.urls;
     return !addedUrls.includes(value);
   })
