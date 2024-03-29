@@ -1,4 +1,4 @@
-const handleViewForm = (elements, watchedState, path, value) => {
+const handleViewForm = (elements, watchedState, i18n, path, value) => {
   switch (value) {
     case 'error':
       elements.input.classList.add('is-invalid');
@@ -13,11 +13,11 @@ const handleViewForm = (elements, watchedState, path, value) => {
   }
 };
 
-export default (elements, watchedState) => (path, value) => {
+export default (elements, watchedState, i18n) => (path, value) => {
   switch (path) {
     case 'validationForm.statusProcess':
     // функция меняющая форму в зависимости от того как прошла валидация
-      handleViewForm(elements, watchedState, path, value);
+      handleViewForm(elements, watchedState, i18n, path, value);
       break;
     default:
       break;
