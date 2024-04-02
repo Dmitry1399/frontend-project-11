@@ -3,6 +3,8 @@ import onChange from 'on-change';
 import i18next from 'i18next';
 import render from './view.js';
 import resources from './locales/index.js';
+import axios from 'axios';
+import parserResponse from './parserResponse.js';
 
 const start = (initialState, i18n) => {
   const elements = {
@@ -27,6 +29,14 @@ const start = (initialState, i18n) => {
     })
     .required();
 
+  const getProxyUrl = (url) => {
+    const proxyUrl = new URL('https://allorigins.hexlet.app/get?');
+    proxyUrl.searchParams.set('disableCache', 'true');
+    proxyUrl.searchParams.set('url', url);
+
+    return proxyUrl;
+  };
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -37,6 +47,7 @@ const start = (initialState, i18n) => {
       .then(() => {
         initialState.feeds.push(sentedUrl.trim());
         watchedState.validationForm.statusProcess = 'succees';
+        axios.get(getProxyUrl(sentedUrl)).then((data) => console.log(parserResponse(data)));
       })
       .catch((err) => {
         watchedState.validationForm.errors = `message.${err.message}`;
