@@ -8,7 +8,7 @@ export default (response) => {
   const { children } = parsed.querySelector('channel');
   const staticCollection = [...children];
   const titleFeed = staticCollection.find((el) => el.tagName === 'title').textContent;
-  const desctiptionFeed = staticCollection.find((el) => el.tagName === 'description').textContent;
+  const descriptionFeed = staticCollection.find((el) => el.tagName === 'description').textContent;
   const itemsFeed = staticCollection.filter((el) => el.tagName === 'item');
   const items = itemsFeed.map((item) => {
     const titlePost = item.querySelector('title').textContent;
@@ -16,5 +16,5 @@ export default (response) => {
     const descriptionPost = item.querySelector('description').textContent;
     return { titlePost, linkPost, descriptionPost };
   });
-  return { titleFeed, desctiptionFeed, items };
+  return { titleFeed, descriptionFeed, items };
 };

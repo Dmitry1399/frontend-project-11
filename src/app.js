@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign, no-return-assign, */
 import _ from 'lodash';
 import * as yup from 'yup';
 import onChange from 'on-change';
@@ -11,6 +12,10 @@ const start = (initialState, i18n) => {
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.querySelector('#url-input'),
+    content: {
+      posts: document.querySelector('.posts'),
+      feeds: document.querySelector('.feeds'),
+    },
   };
 
   const watchedState = onChange(initialState, render(elements, initialState, i18n));
@@ -25,13 +30,13 @@ const start = (initialState, i18n) => {
     .trim()
     .url()
     .test('already added feed', 'alreadyAddUrl', function isAlreadyAddFeed(value) {
-      const addedUrls = this.options.context.urls;
+      const { addedUrls } = this.options;
       return !addedUrls.includes(value);
     })
     .required();
 
-  const initFeedsAndPosts = (parsedResponse, url) => {
-    const { titleFeed: title, descriptionFeed: description, items } = parsedResponse;
+  const initFeedsAndPosts = (content, url) => {
+    const { titleFeed: title, descriptionFeed: description, items } = content;
     const idForFeed = _.uniqueId();
 
     const feed = {
@@ -51,7 +56,6 @@ const start = (initialState, i18n) => {
     });
 
     const posts = initPosts.reverse();
-
     return { feed, posts };
   };
 
@@ -68,9 +72,9 @@ const start = (initialState, i18n) => {
 
     return axios.get(proxyUrl)
       .then((respose) => {
-        const parsed = parserResponse(respose);
-        const { feed, posts } = initFeedsAndPosts(parsed, sentedUrl);
+        const content = parserResponse(respose);
 
+        const { feed, posts } = initFeedsAndPosts(content, sentedUrl);
         watchedState.feeds.push(feed);
         watchedState.posts.push(...posts);
 
@@ -94,12 +98,12 @@ const start = (initialState, i18n) => {
     const sentedUrl = formData.get('url');
     const addedUrls = initialState.feeds.map(({ url }) => url);
     const proxyUrl = getProxyUrl(sentedUrl);
-    schema.validate(sentedUrl, { context: { urls: addedUrls } })
+    schema.validate(sentedUrl, { addedUrls })
       .then(() => {
         loadingFeedsAndPosts(proxyUrl, sentedUrl);
       })
       .catch((err) => {
-        watchedState.validationForm.errors = `message.${err.message}`;
+        initialState.validationForm.errors = `message.${err.message}`;
         watchedState.validationForm.statusProcess = 'error';
       });
   });
