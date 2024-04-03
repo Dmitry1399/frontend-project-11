@@ -10,11 +10,11 @@ export default (response) => {
   const titleFeed = staticCollection.find((el) => el.tagName === 'title').textContent;
   const desctiptionFeed = staticCollection.find((el) => el.tagName === 'description').textContent;
   const itemsFeed = staticCollection.filter((el) => el.tagName === 'item');
-  const posts = itemsFeed.map((post) => {
-    const titlePost = post.querySelector('title').textContent;
-    const linkPost = post.querySelector('link').textContent;
-    const descriptionPost = post.querySelector('description').textContent;
+  const items = itemsFeed.map((item) => {
+    const titlePost = item.querySelector('title').textContent;
+    const linkPost = item.querySelector('link').textContent;
+    const descriptionPost = item.querySelector('description').textContent;
     return { titlePost, linkPost, descriptionPost };
   });
-  return { titleFeed, desctiptionFeed, posts };
+  return { titleFeed, desctiptionFeed, items };
 };

@@ -5,6 +5,7 @@ export default {
       alreadyAddUrl: 'RSS уже существует',
       succes: 'RSS успешно загружен',
       parseError: 'Ресурс не содержит валидный RSS',
+      networkError: 'Ошибка сети',
     },
   },
 };

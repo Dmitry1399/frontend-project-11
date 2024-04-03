@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
+import axios from 'axios';
 import render from './view.js';
 import resources from './locales/index.js';
-import axios from 'axios';
 import parserResponse from './parserResponse.js';
 
 const start = (initialState, i18n) => {
@@ -29,6 +30,31 @@ const start = (initialState, i18n) => {
     })
     .required();
 
+  const initFeedsAndPosts = (parsedResponse, url) => {
+    const { titleFeed: title, descriptionFeed: description, items } = parsedResponse;
+    const idForFeed = _.uniqueId();
+
+    const feed = {
+      title,
+      description,
+      url,
+      id: idForFeed,
+    };
+
+    const initPosts = items.map((item) => {
+      const postId = _.uniqueId();
+      return {
+        ...item,
+        id: postId,
+        idForFeed,
+      };
+    });
+
+    const posts = initPosts.reverse();
+
+    return { feed, posts };
+  };
+
   const getProxyUrl = (url) => {
     const proxyUrl = new URL('https://allorigins.hexlet.app/get?');
     proxyUrl.searchParams.set('disableCache', 'true');
@@ -37,17 +63,40 @@ const start = (initialState, i18n) => {
     return proxyUrl;
   };
 
+  const loadingFeedsAndPosts = (proxyUrl, sentedUrl) => {
+    watchedState.loadProcess.statusProcess = 'start';
+
+    return axios.get(proxyUrl)
+      .then((respose) => {
+        const parsed = parserResponse(respose);
+        const { feed, posts } = initFeedsAndPosts(parsed, sentedUrl);
+
+        watchedState.feeds.push(feed);
+        watchedState.posts.push(...posts);
+
+        watchedState.loadProcess.statusProcess = 'succes';
+        watchedState.validationForm.statusProcess = 'succes';
+      })
+      .catch((err) => {
+        if (err.code === 'ERR_NETWORK') {
+          watchedState.loadProcess.errors = 'messages.networkError';
+        } else {
+          watchedState.loadProcess.errors = `messages.${err.message}`;
+        }
+        watchedState.loadProcess.errors = 'errorLoad';
+      });
+  };
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
     const sentedUrl = formData.get('url');
-    const addedUrls = initialState.feeds;
+    const addedUrls = initialState.feeds.map(({ url }) => url);
+    const proxyUrl = getProxyUrl(sentedUrl);
     schema.validate(sentedUrl, { context: { urls: addedUrls } })
       .then(() => {
-        initialState.feeds.push(sentedUrl.trim());
-        watchedState.validationForm.statusProcess = 'succees';
-        axios.get(getProxyUrl(sentedUrl)).then((data) => console.log(parserResponse(data)));
+        loadingFeedsAndPosts(proxyUrl, sentedUrl);
       })
       .catch((err) => {
         watchedState.validationForm.errors = `message.${err.message}`;
@@ -59,14 +108,15 @@ const start = (initialState, i18n) => {
 export default () => {
   const initialState = {
     validationForm: {
-      statusProcess: 'waiting', // succees,error,filling
+      statusProcess: 'waiting', // succees,error,
       errors: null,
     },
-    // loadProcess: {
-
-    // },
+    loadProcess: {
+      statusProcess: 'waiting', //
+      errors: null,
+    },
     feeds: [],
-  // posts: [],
+    posts: [],
   };
 
   const i18n = i18next.createInstance();
