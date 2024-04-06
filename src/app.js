@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign, no-return-assign, */
 import _ from 'lodash';
 import * as yup from 'yup';
 import onChange from 'on-change';
@@ -67,6 +66,41 @@ const start = (initialState, i18n) => {
     return proxyUrl;
   };
 
+  function updateUrl() {
+    const { feeds, posts } = watchedState;
+
+    const gettingFeedsAndPosts = feeds.map(({ url }) => {
+      const proxyUrl = getProxyUrl(url);
+
+      return axios.get(proxyUrl)
+        .then(parserResponse)
+        .then((data) => initFeedsAndPosts(data, url));
+    });
+
+    const result = Promise.all(gettingFeedsAndPosts);
+
+    result
+      .then((newContent) => {
+        const refreshedPosts = newContent.reduce((acc, feedsAndPosts) => {
+          acc.push(...feedsAndPosts.posts);
+          return acc;
+        }, []);
+
+        const comparator = (first, second) => first.titlePost === second.titlePost;
+        const newPost = _.differenceWith(refreshedPosts, posts, comparator);
+        if (newPost.length) {
+          watchedState.posts.push(...newPost);
+        }
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setTimeout(updateUrl, 5000));
+  }
+  const refresh = () => {
+    setTimeout(updateUrl(), 5000);
+  };
+
+  refresh();
+
   const loadingFeedsAndPosts = (proxyUrl, sentedUrl) => {
     watchedState.loadProcess.statusProcess = 'start';
 
@@ -103,7 +137,7 @@ const start = (initialState, i18n) => {
         loadingFeedsAndPosts(proxyUrl, sentedUrl);
       })
       .catch((err) => {
-        initialState.validationForm.errors = `message.${err.message}`;
+        watchedState.validationForm.errors = `message.${err.message}`;
         watchedState.validationForm.statusProcess = 'error';
       });
   });

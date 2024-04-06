@@ -1,10 +1,10 @@
-/* eslint-disable no-param-reassign, */
+/* eslint-disable no-param-reassign, no-return-assign, */
 const renderPosts = (posts, i18n) => {
   const list = document.querySelector('.posts .card ul');
 
   posts.forEach(({ titlePost, linkPost, id }) => {
     const item = document.createElement('li');
-    const titleElement = document.createElement('a');
+    const title = document.createElement('a');
     const button = document.createElement('button');
     item.classList.add(
       'list-group-item',
@@ -16,10 +16,10 @@ const renderPosts = (posts, i18n) => {
     );
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
 
-    titleElement.setAttribute('href', `${linkPost}`);
-    titleElement.setAttribute('data-id', `${id}`);
-    titleElement.setAttribute('target', '_blank');
-    titleElement.setAttribute('rel', 'noopener noreferrer');
+    title.setAttribute('href', `${linkPost}`);
+    title.setAttribute('data-id', `${id}`);
+    title.setAttribute('target', '_blank');
+    title.setAttribute('rel', 'noopener noreferrer');
 
     button.setAttribute('type', 'button');
     button.setAttribute('data-id', `${id}`);
@@ -27,10 +27,10 @@ const renderPosts = (posts, i18n) => {
     button.setAttribute('data-bs-target', '#modal');
     button.setAttribute('data-name', 'view');
 
-    titleElement.textContent = titlePost;
+    title.textContent = titlePost;
     button.textContent = i18n.t('buttons.view');
 
-    item.append(titleElement, button);
+    item.append(title, button);
     list.prepend(item);
   });
 };
@@ -39,19 +39,19 @@ const renderFeeds = (feeds) => {
   const list = document.querySelector('.feeds .card ul');
 
   feeds.forEach((feed) => {
-    const conteinerContentFeed = document.createElement('li');
+    const containerContentFeed = document.createElement('li');
     const title = document.createElement('h3');
     const description = document.createElement('p');
 
-    conteinerContentFeed.classList.add('list-group-item', 'border-0', 'border-end-0');
+    containerContentFeed.classList.add('list-group-item', 'border-0', 'border-end-0');
     title.classList.add('h6', 'm-0');
     description.classList.add('m-0', 'small', 'text-black-50');
 
     title.textContent = feed.title;
     description.textContent = feed.description;
 
-    conteinerContentFeed.append(title, description);
-    list.prepend(conteinerContentFeed);
+    containerContentFeed.append(title, description);
+    list.prepend(containerContentFeed);
   });
 };
 
@@ -75,8 +75,12 @@ const addTitles = (titleText) => {
 };
 
 const deletContentRenderTitles = (elements, i18n, path) => {
-  elements.content[path].textContent = '';
-  elements.content[path].append(
+  document.querySelector(`.${path}`).textContent = '';
+  document.querySelector(`.${path}`).append(
+    addTitles(i18n.t(`titles.${path}`)),
+  );
+  document.querySelector(`.${path}`).textContent = '';
+  document.querySelector(`.${path}`).append(
     addTitles(i18n.t(`titles.${path}`)),
   );
 };
@@ -89,6 +93,7 @@ const handleViewForm = (elements, watchedState, i18n, path, value) => {
       break;
     case 'succees':
       elements.input.classList.remove('is-invalid');
+      elements.input.classList.add('is-valid');
       elements.form.reset();
       elements.input.focus();
       // ренжерим "успех"
