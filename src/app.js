@@ -96,7 +96,7 @@ const start = (initialState, i18n) => {
       .finally(() => setTimeout(updateUrl, 5000));
   }
   const refresh = () => {
-    setTimeout(updateUrl(), 5000);
+    setTimeout(updateUrl, 5000);
   };
 
   refresh();
@@ -132,14 +132,23 @@ const start = (initialState, i18n) => {
     const sentedUrl = formData.get('url');
     const addedUrls = initialState.feeds.map(({ url }) => url);
     const proxyUrl = getProxyUrl(sentedUrl);
+
     schema.validate(sentedUrl, { addedUrls })
-      .then(() => {
-        loadingFeedsAndPosts(proxyUrl, sentedUrl);
-      })
+      .then(() => loadingFeedsAndPosts(proxyUrl, sentedUrl))
       .catch((err) => {
         watchedState.validationForm.errors = `message.${err.message}`;
         watchedState.validationForm.statusProcess = 'error';
       });
+  });
+
+  document.querySelector('.posts').addEventListener('click', (e) => {
+    const el = e.target;
+    const { id } = el.dataset;
+
+    if (id) {
+      watchedState.ui.activePost = id;
+      watchedState.ui.clickedPosts.push(id);
+    }
   });
 };
 
@@ -155,6 +164,10 @@ export default () => {
     },
     feeds: [],
     posts: [],
+    ui: {
+      activePost: null,
+      clickedPosts: [],
+    },
   };
 
   const i18n = i18next.createInstance();

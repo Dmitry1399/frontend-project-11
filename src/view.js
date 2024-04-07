@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign, no-return-assign, */
-const renderPosts = (posts, i18n) => {
-  const list = document.querySelector('.posts .card ul');
+const renderPosts = (posts, watchedState, i18n) => {
+  const list = document.querySelector('.posts > .card > ul');
 
   posts.forEach(({ titlePost, linkPost, id }) => {
     const item = document.createElement('li');
@@ -14,6 +14,13 @@ const renderPosts = (posts, i18n) => {
       'border-0',
       'border-end-0',
     );
+
+    if (watchedState.ui.clickedPosts.includes(id)) {
+      title.classList.add('fw-normal', 'link-secondary');
+    } else {
+      title.classList.add('fw-bold');
+    }
+
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
 
     title.setAttribute('href', `${linkPost}`);
@@ -55,6 +62,19 @@ const renderFeeds = (feeds) => {
   });
 };
 
+const handleModalView = (watchedState, value) => {
+  const currentPost = document.querySelector(`[data-id="${value}"]`);
+  const { posts } = watchedState;
+  const currentPostData = posts.find(({ id }) => id === value);
+  const { titlePost, linkPost, descriptionPost } = currentPostData;
+
+  currentPost.classList.remove('fw-bold');
+  currentPost.classList.add('fw-normal', 'link-secondary');
+
+  document.querySelector('.modal-title').textContent = titlePost;
+  document.querySelector('.modal-body').textContent = descriptionPost;
+  document.querySelector('.full-article').setAttribute('href', `${linkPost}`);
+};
 const addTitles = (titleText) => {
   const container = document.createElement('div');
   const titlesContainer = document.createElement('div');
@@ -91,6 +111,7 @@ const handleViewForm = (elements, watchedState, i18n, path, value) => {
       elements.input.classList.add('is-invalid');
       // рендерить ошибку
       break;
+
     case 'succees':
       elements.input.classList.remove('is-invalid');
       elements.input.classList.add('is-valid');
@@ -98,6 +119,7 @@ const handleViewForm = (elements, watchedState, i18n, path, value) => {
       elements.input.focus();
       // ренжерим "успех"
       break;
+
     default:
       break;
   }
@@ -109,14 +131,21 @@ export default (elements, watchedState, i18n) => (path, value) => {
     // функция меняющая форму в зависимости от того как прошла валидация
       handleViewForm(elements, watchedState, i18n, path, value);
       break;
+
+    case 'ui.activePost':
+      handleModalView(watchedState, value);
+      break;
+
     case 'feeds':
       deletContentRenderTitles(elements, i18n, path);
       renderFeeds(watchedState.feeds);
       break;
+
     case 'posts':
       deletContentRenderTitles(elements, i18n, path);
-      renderPosts(watchedState.posts, i18n, watchedState);
+      renderPosts(watchedState.posts, watchedState, i18n);
       break;
+
     default:
       break;
   }
