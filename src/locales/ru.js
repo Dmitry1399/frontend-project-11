@@ -6,7 +6,7 @@ export default {
     messages: {
       invalidUrl: 'Ссылка должна быть валидным URL',
       alreadyAddUrl: 'RSS уже существует',
-      succes: 'RSS успешно загружен',
+      success: 'RSS успешно загружен',
       parseError: 'Ресурс не содержит валидный RSS',
       networkError: 'Ошибка сети',
     },

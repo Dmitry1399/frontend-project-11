@@ -94,7 +94,7 @@ const addTitles = (titleText) => {
   return container;
 };
 
-const deletContentRenderTitles = (elements, i18n, path) => {
+const deletContentRenderTitles = (i18n, path) => {
   document.querySelector(`.${path}`).textContent = '';
   document.querySelector(`.${path}`).append(
     addTitles(i18n.t(`titles.${path}`)),
@@ -105,19 +105,33 @@ const deletContentRenderTitles = (elements, i18n, path) => {
   );
 };
 
-const handleViewForm = (elements, watchedState, i18n, path, value) => {
+const renderErrorMessage = (watchedState, i18n, path) => {
+  const rere = path.replace('.statusProcess', '');
+  const errorMessage = watchedState[rere].errors;
+
+  document.querySelector('#url-input').classList.add('is-invalid');
+  document.querySelector('.feedback').classList.remove('text-success');
+  document.querySelector('.feedback').classList.add('text-danger');
+  document.querySelector('.feedback').textContent = i18n.t(errorMessage);
+};
+
+const renderSuccessMessage = (i18n) => {
+  document.querySelector('#url-input').classList.remove('is-invalid');
+  document.querySelector('.rss-form').reset();
+  document.querySelector('#url-input').focus();
+  document.querySelector('.feedback').classList.remove('text-danger');
+  document.querySelector('.feedback').classList.add('text-success');
+  document.querySelector('.feedback').textContent = i18n.t('messages.success');
+};
+
+const handleViewForm = (watchedState, i18n, path, value) => {
   switch (value) {
     case 'error':
-      elements.input.classList.add('is-invalid');
-      // рендерить ошибку
+      renderErrorMessage(watchedState, i18n, path);
       break;
 
-    case 'succees':
-      elements.input.classList.remove('is-invalid');
-      elements.input.classList.add('is-valid');
-      elements.form.reset();
-      elements.input.focus();
-      // ренжерим "успех"
+    case 'sent':
+      renderSuccessMessage(i18n);
       break;
 
     default:
@@ -128,8 +142,7 @@ const handleViewForm = (elements, watchedState, i18n, path, value) => {
 export default (elements, watchedState, i18n) => (path, value) => {
   switch (path) {
     case 'validationForm.statusProcess':
-    // функция меняющая форму в зависимости от того как прошла валидация
-      handleViewForm(elements, watchedState, i18n, path, value);
+      handleViewForm(watchedState, i18n, path, value);
       break;
 
     case 'ui.activePost':
@@ -137,12 +150,12 @@ export default (elements, watchedState, i18n) => (path, value) => {
       break;
 
     case 'feeds':
-      deletContentRenderTitles(elements, i18n, path);
+      deletContentRenderTitles(i18n, path);
       renderFeeds(watchedState.feeds);
       break;
 
     case 'posts':
-      deletContentRenderTitles(elements, i18n, path);
+      deletContentRenderTitles(i18n, path);
       renderPosts(watchedState.posts, watchedState, i18n);
       break;
 

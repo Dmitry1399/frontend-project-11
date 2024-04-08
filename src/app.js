@@ -67,7 +67,7 @@ const start = (initialState, i18n) => {
   };
 
   function updateUrl() {
-    const { feeds, posts } = watchedState;
+    const { feeds, posts } = initialState;
 
     const gettingFeedsAndPosts = feeds.map(({ url }) => {
       const proxyUrl = getProxyUrl(url);
@@ -112,8 +112,8 @@ const start = (initialState, i18n) => {
         watchedState.feeds.push(feed);
         watchedState.posts.push(...posts);
 
-        watchedState.loadProcess.statusProcess = 'succes';
-        watchedState.validationForm.statusProcess = 'succes';
+        watchedState.loadProcess.statusProcess = 'success';
+        watchedState.validationForm.statusProcess = 'sent';
       })
       .catch((err) => {
         if (err.code === 'ERR_NETWORK') {
@@ -130,13 +130,15 @@ const start = (initialState, i18n) => {
 
     const formData = new FormData(e.target);
     const sentedUrl = formData.get('url');
-    const addedUrls = initialState.feeds.map(({ url }) => url);
+    const addedUrls = watchedState.feeds.map(({ url }) => url);
     const proxyUrl = getProxyUrl(sentedUrl);
 
     schema.validate(sentedUrl, { addedUrls })
-      .then(() => loadingFeedsAndPosts(proxyUrl, sentedUrl))
+      .then(() => {
+        loadingFeedsAndPosts(proxyUrl, sentedUrl);
+      })
       .catch((err) => {
-        watchedState.validationForm.errors = `message.${err.message}`;
+        watchedState.validationForm.errors = `messages.${err.message}`;
         watchedState.validationForm.statusProcess = 'error';
       });
   });
