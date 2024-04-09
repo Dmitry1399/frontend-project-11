@@ -155,11 +155,11 @@ const start = (initialState, i18n) => {
 export default () => {
   const initialState = {
     validationForm: {
-      statusProcess: 'waiting', // succees,error,
+      statusProcess: 'waiting',
       errors: null,
     },
     loadProcess: {
-      statusProcess: 'waiting', //
+      statusProcess: 'waiting',
       errors: null,
     },
     feeds: [],

@@ -99,6 +99,7 @@ const deletContentRenderTitles = (i18n, path) => {
   document.querySelector(`.${path}`).append(
     addTitles(i18n.t(`titles.${path}`)),
   );
+
   document.querySelector(`.${path}`).textContent = '';
   document.querySelector(`.${path}`).append(
     addTitles(i18n.t(`titles.${path}`)),
@@ -165,14 +166,14 @@ const handleRenderForm = (watchedState, i18n, path, value) => {
   }
 };
 
-export default (watchedState, i18n) => (path, value) => {
+export default (elements, watchedState, i18n) => (path, value) => {
   switch (path) {
-    case 'validationForm.statusProcess':
-      handleViewForm(watchedState, i18n, path, value);
-      break;
-
     case 'loadProcess.statusProcess':
       handleRenderForm(watchedState, i18n, path, value);
+      break;
+
+    case 'validationForm.statusProcess':
+      handleViewForm(watchedState, i18n, path, value);
       break;
 
     case 'ui.activePost':
