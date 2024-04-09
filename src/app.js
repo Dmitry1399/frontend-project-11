@@ -107,11 +107,9 @@ const start = (initialState, i18n) => {
     return axios.get(proxyUrl)
       .then((respose) => {
         const content = parserResponse(respose);
-
         const { feed, posts } = initFeedsAndPosts(content, sentedUrl);
         watchedState.feeds.push(feed);
         watchedState.posts.push(...posts);
-
         watchedState.loadProcess.statusProcess = 'success';
         watchedState.validationForm.statusProcess = 'sent';
       })

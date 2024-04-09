@@ -124,6 +124,14 @@ const renderSuccessMessage = (i18n) => {
   document.querySelector('.feedback').textContent = i18n.t('messages.success');
 };
 
+const toggleFormOff = () => {
+  const button = document.querySelector('#button-add');
+  const input = document.querySelector('#url-input');
+
+  button.toggleAttribute('disabled');
+  input.toggleAttribute('readonly');
+};
+
 const handleViewForm = (watchedState, i18n, path, value) => {
   switch (value) {
     case 'error':
@@ -139,10 +147,32 @@ const handleViewForm = (watchedState, i18n, path, value) => {
   }
 };
 
-export default (elements, watchedState, i18n) => (path, value) => {
+const handleRenderForm = (watchedState, i18n, path, value) => {
+  switch (value) {
+    case 'start':
+      toggleFormOff();
+      break;
+    case 'success':
+      toggleFormOff();
+      break;
+    case 'errorLoad':
+      renderErrorMessage(watchedState, i18n, path);
+      toggleFormOff();
+      break;
+    default:
+      toggleFormOff();
+      break;
+  }
+};
+
+export default (watchedState, i18n) => (path, value) => {
   switch (path) {
     case 'validationForm.statusProcess':
       handleViewForm(watchedState, i18n, path, value);
+      break;
+
+    case 'loadProcess.statusProcess':
+      handleRenderForm(watchedState, i18n, path, value);
       break;
 
     case 'ui.activePost':
