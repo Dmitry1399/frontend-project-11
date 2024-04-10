@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign, no-return-assign, */
 const renderPosts = (posts, watchedState, i18n) => {
   const list = document.querySelector('.posts > .card > ul');
 
@@ -135,12 +134,13 @@ const toggleFormOff = () => {
 
 const handleViewForm = (watchedState, i18n, path, value) => {
   switch (value) {
-    case 'error':
-      renderErrorMessage(watchedState, i18n, path);
-      break;
-
     case 'sent':
       renderSuccessMessage(i18n);
+      break;
+
+    case 'validError':
+    case 'error':
+      renderErrorMessage(watchedState, i18n, path);
       break;
 
     default:
@@ -156,7 +156,7 @@ const handleRenderForm = (watchedState, i18n, path, value) => {
     case 'success':
       toggleFormOff();
       break;
-    case 'errorLoad':
+    case 'error':
       renderErrorMessage(watchedState, i18n, path);
       toggleFormOff();
       break;
@@ -166,7 +166,7 @@ const handleRenderForm = (watchedState, i18n, path, value) => {
   }
 };
 
-export default (elements, watchedState, i18n) => (path, value) => {
+export default (watchedState, i18n) => (path, value) => {
   switch (path) {
     case 'loadProcess.statusProcess':
       handleRenderForm(watchedState, i18n, path, value);

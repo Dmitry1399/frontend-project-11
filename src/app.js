@@ -17,7 +17,7 @@ const start = (initialState, i18n) => {
     },
   };
 
-  const watchedState = onChange(initialState, render(elements, initialState, i18n));
+  const watchedState = onChange(initialState, render(initialState, i18n));
 
   yup.setLocale({
     string: {
@@ -92,6 +92,7 @@ const start = (initialState, i18n) => {
           watchedState.posts.push(...newPost);
         }
       })
+      // eslint-disable-next-line no-console
       .catch((error) => console.error(error))
       .finally(() => setTimeout(updateUrl, 5000));
   }
@@ -119,7 +120,7 @@ const start = (initialState, i18n) => {
         } else {
           watchedState.loadProcess.errors = `messages.${err.message}`;
         }
-        watchedState.loadProcess.errors = 'errorLoad';
+        watchedState.loadProcess.statusProcess = 'error';
       });
   };
 
@@ -137,7 +138,8 @@ const start = (initialState, i18n) => {
       })
       .catch((err) => {
         watchedState.validationForm.errors = `messages.${err.message}`;
-        watchedState.validationForm.statusProcess = 'error';
+        if (watchedState.validationForm.statusProcess === 'validError') watchedState.validationForm.statusProcess = 'error';
+        else watchedState.validationForm.statusProcess = 'validError';
       });
   });
 
