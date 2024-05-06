@@ -1,23 +1,23 @@
 [![Actions Status](https://github.com/Dmitry1399/frontend-project-11/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/Dmitry1399/frontend-project-11/actions)  [![Maintainability](https://api.codeclimate.com/v1/badges/a4f2be70f727311011a2/maintainability)](https://codeclimate.com/github/Dmitry1399/frontend-project-11/maintainability)
 
-# RSS agregator 
-### Explore [This](https://frontend-project-11-mu-one.vercel.app/)
+# RSS агрегатор 
+### Посмотрите [Реализацию](https://frontend-project-11-mu-one.vercel.app/)
 ___
-#### About
+#### О проекте
 
-RSS aggregator is a powerful tool for collecting, analyzing and reading the latest news and articles from your favorite websites and blogs in one place. This solution allows users to easily subscribe to RSS feeds, automatically updating them and providing relevant content in a convenient and readable form.
+RSS-агрегатор - это мощный инструмент для сбора, анализа и чтения последних новостей и статей с ваших любимых веб-сайтов и блогов в одном месте. Это решение позволяет пользователям легко подписываться на RSS-каналы, автоматически обновляя их и предоставляя актуальный контент в удобном и читаемом виде.Проект реализован с использованием паттерна проектирования - MVC.
 ___
 
-#### Technical stack
+#### Используемый стэк
 * **Bootstrap**
 * **Weebpack**
-* **i18next :** simple mass text updates
-* **yup :** a schema builder for analyzing and verifying values at runtime
+* **i18next :** простое массовое обновление текста
+* **yup :** конструктор схем для анализа и проверки значений во время выполнения
 ___
-#### Commands
+#### Команды
 ```
-make install - installing dependencies
-make develop - runs Webpack in development mode with the development server enabled
+make install - установка зависимостей
+make develop - запускает Webpack в режиме разработки с включенным сервером разработки
  ```
 
 #### Deploy
